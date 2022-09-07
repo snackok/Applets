@@ -40,6 +40,7 @@ class PandasModel(QAbstractTableModel):
         if index.isValid():
             if role == Qt.BackgroundRole:
                 #print('---{0}-----'.format(self.columnCount()))
+                return QBrush(Qt.yellow)
                 if self.columnCount() >= 6:
                     it = self._df.iloc[index.row(), 10]
                     if it == "5":
