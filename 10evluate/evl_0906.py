@@ -141,7 +141,6 @@ class Stats:
         self.ui.txt_debug_info.appendPlainText(t_str_msg)
 
 
-
 app = QApplication([])
 stats = Stats()
 stats.ui.show()
