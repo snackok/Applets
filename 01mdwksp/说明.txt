@@ -1,0 +1,8 @@
+功能： 新建一个
+工作文件夹内含——DOC
+              ——Data
+              ——Ref
+              ——Temp
+比如：mdwksp_v2 D:\01Work\Python\MyProgram\Applets\01mdwksp\NEW
+运行结果：会在D:\01Work\Python\MyProgram\Applets\01mdwksp 文件夹下新建一个 NEW文件夹，
+子文件夹包括 DOC、Data、Ref、Temp
