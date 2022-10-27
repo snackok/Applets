@@ -123,14 +123,17 @@ class Stats:
         # 测试变颜色
         #self.c_model.cellPaint(2, 2, "#FFFF00")
 
-
     # 选择评价标准时候触发
     def handle_sel_stand(self):
         self.func_debug(self.ui.cob_eval.currentText(), "选择了")
 
     # 保存函数
     def handle_save(self):
-        QMessageBox.about(self.ui, '保存', '保存函数')
+        savefile_name, file_type = QFileDialog.getSaveFileName(self.ui, '选择文件', ' ', 'Excel files(*.xlsx , *.xls)')
+        QMessageBox.about(self.ui, '保存', '保存'+savefile_name)
+        f_df = self.ui.list_xls.model()._df  # type: pd.DataFrame
+        f_df.to_excel(savefile_name)
+
 
     # 调试信息方法，以字符串方式输出 p_msg , 参数p_clear_msg 为true时 清空对话框
     def func_debug(self, p_msg, p_str_title='调试', p_clear_msg=False):
