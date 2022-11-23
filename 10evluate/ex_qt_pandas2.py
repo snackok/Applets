@@ -27,7 +27,7 @@ class PandasModel(QAbstractTableModel):
         if index.isValid():
             if role == Qt.BackgroundRole:
                 print("data_")
-                #return QBrush(Qt.yellow)   # 测试
+                # return QBrush(Qt.yellow)   # 测试
                 if self.columnCount() >= 6:
                     it = self._df.iloc[index.row(), 5]
                     if it == "Ready for QC":
