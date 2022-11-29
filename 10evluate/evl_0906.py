@@ -2,7 +2,7 @@
 """
 @作者：WW.WCGS,YYL.WCGS
 @文件名：evl_0216.py
-@时间：2022/8/30  13:23
+@时间：2022/11/24  13:23
 @文档说明:
 """
 from PyQt5.QtGui import QBrush
@@ -57,12 +57,14 @@ class Stats:
         self.func_debug("读取评价标准")
         t_stand = pd.read_excel("评价标准.xlsx", index_col=0)
         self.func_debug(t_stand, "读取评价标准")
-        for i in range(t_stand.shape[0]):
+        print(t_stand.shape[0])
+        for i in range(2):
             self.func_debug(t_stand.loc[i+1], "单个评价标准")
             self.ui.cob_eval.addItem(str(i + 1) + '.' + t_stand.name[i+1])
 
     # 解析函数
     def handle_debug(self):
+        self.c_model.testfun()
         QMessageBox.about(self.ui, '测试', '测试函数')
         self.func_debug("--------------测试---------------")
         # self.c_model.appendRow([])
@@ -121,7 +123,7 @@ class Stats:
         self.c_model.setDataFrame(f_df)
         #self.ui.list_xls.setModel(model)
         # 测试变颜色
-        #self.c_model.cellPaint(2, 2, "#FFFF00")
+        # self.c_model.cellPaint(2, 2, "#FFFF00")
 
     # 选择评价标准时候触发
     def handle_sel_stand(self):

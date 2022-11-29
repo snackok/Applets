@@ -37,9 +37,11 @@ class PandasModel(QAbstractTableModel):
 
     # 返回二维数组
     def data(self, index, role=Qt.DisplayRole):
+        self.test = "XXXX"
+
         if index.isValid():
             if role == Qt.BackgroundRole:
-                print('---{0}-1123----'.format(self.columnCount()))
+                # print('---{0}-1123----'.format(self.columnCount()))
                 return QBrush(Qt.yellow)
                 if self.columnCount() >= 6:
                     it = self._df.iloc[index.row(), 10]
@@ -63,9 +65,15 @@ class PandasModel(QAbstractTableModel):
         self.colors[(row, column)] = color
         self.dataChanged.emit(ix, ix, (Qt.BackgroundRole,))
 
+    def testfun(self):
+        print(self.test)
+
 def eval_item(p_value, p_ele):
-    #print(str(p_value) + "_" + str(p_ele))
+    print(str(p_value) + "_" + str(p_ele))
+    # 读取标准文件，找到对应元素的区间进行判断
+
     return rand.randint(1, 5)
+
 
 def is_element(col_name):
     theList = ["K+", "Na+", "Mg2+","Cr6+","NH4+","Cl-","F-","Fe"]
