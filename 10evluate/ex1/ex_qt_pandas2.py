@@ -1,9 +1,13 @@
 import sys
 import pandas as pd
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QAbstractTableModel, QObject, Qt
-from PyQt5.QtGui import QBrush
-from PyQt5.QtWidgets import QApplication, QTableView
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PySide2 import QtWidgets
+from PySide2.QtCore import QFile, QAbstractTableModel, QObject, Qt
+from PySide2.QtGui import QBrush
+from PyQt5.QtWidgets import QApplication, QTableView, QMainWindow
+from PySide2.QtUiTools import QUiLoader
+from ex import Ui_Dialog
 
 
 class PandasModel(QAbstractTableModel):
@@ -27,7 +31,7 @@ class PandasModel(QAbstractTableModel):
         if index.isValid():
             if role == Qt.BackgroundRole:
                 print("data_")
-                # return QBrush(Qt.yellow)   # 测试
+                return QBrush(Qt.yellow)   # 测试
                 if self.columnCount() >= 6:
                     it = self._df.iloc[index.row(), 5]
                     if it == "Ready for QC":
@@ -43,12 +47,38 @@ class PandasModel(QAbstractTableModel):
         return None
 
 
+class MyPyQT_Form(QMainWindow,Ui_Dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    w = QTableView()
+    # 调用ui
+    # 从文件中加载UI定义
+    qfile_stats = QFile('ui/ex.ui')
+    qfile_stats.open(QFile.ReadOnly)
+    qfile_stats.close()
+    ui = QUiLoader().load(qfile_stats)
+    # # 从 UI 定义中动态 创建一个相应的窗口对象
+    # # 注意：里面的控件对象也成为窗口对象的属性了
+    # # 比如 self.ui.button , self.ui.textEdit
+
+
+
+    # 直接用pyUIC
+    # ui = MyPyQT_Form()
+
+    w = ui.mytableview
     model = PandasModel()
+    print(type(w))
     w.setModel(model)
-    w.show()
+
+    ui.show()
+
 
     import random
 

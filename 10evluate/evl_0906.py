@@ -5,10 +5,10 @@
 @时间：2022/11/24  13:23
 @文档说明:
 """
-from PyQt5.QtGui import QBrush
-from PySide2.QtWidgets import QApplication, QMessageBox, QFileDialog, QTableWidgetItem
+from PySide2.QtGui import QBrush
+from PySide2.QtWidgets import QApplication, QMessageBox, QFileDialog
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtCore import QFile, QAbstractTableModel
+from PySide2.QtCore import QFile
 from PyQt5.QtCore import Qt
 import numpy as np
 import pandas as pd

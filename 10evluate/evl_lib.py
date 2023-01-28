@@ -6,9 +6,9 @@
 @文档说明: 用于view显示dataframe
 """
 import pandas as pd
-from PySide2.QtCore import QAbstractTableModel
-from PyQt5.QtCore import Qt, pyqtSlot
-from PyQt5.QtGui import QColor,QBrush
+from PySide2.QtCore import QAbstractTableModel,Qt
+from PyQt5.QtCore import pyqtSlot
+from PySide2.QtGui import QBrush
 import random as rand
 
 
@@ -42,13 +42,15 @@ class PandasModel(QAbstractTableModel):
         if index.isValid():
             if role == Qt.BackgroundRole:
                 # print('---{0}-1123----'.format(self.columnCount()))
-                return QBrush(Qt.yellow)
-                if self.columnCount() >= 6:
+                # return QBrush(Qt.red)
+                if self.columnCount() > 11:
+                    print(index.row())
                     it = self._df.iloc[index.row(), 10]
-                    if it == "5":
+                    print('---{0}-it----'.format(it))
+                    if it == 5:
                         print("-------5--------")
                         return QBrush(Qt.yellow)
-                    if it == "4":
+                    if it == 4:
                         print("-------4--------")
                         return QBrush(Qt.green)
 
@@ -60,10 +62,10 @@ class PandasModel(QAbstractTableModel):
             return self._df.columns[col]
         return None
 
-    def change_color(self, row, column, color):
-        ix = self.index(row, column)
-        self.colors[(row, column)] = color
-        self.dataChanged.emit(ix, ix, (Qt.BackgroundRole,))
+    # def change_color(self, row, column, color):
+    #     ix = self.index(row, column)
+    #     self.colors[(row, column)] = color
+    #     self.dataChanged.emit(ix, ix, (Qt.BackgroundRole,))
 
     def testfun(self):
         print(self.test)
