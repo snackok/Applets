@@ -10,7 +10,6 @@ from PySide2.QtWidgets import QApplication, QMessageBox, QFileDialog
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import QFile
 from PyQt5.QtCore import Qt
-import numpy as np
 import pandas as pd
 import evl_lib
 
