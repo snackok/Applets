@@ -44,14 +44,14 @@ class PandasModel(QAbstractTableModel):
                 # print('---{0}-1123----'.format(self.columnCount()))
                 # return QBrush(Qt.red)
                 if self.columnCount() > 11:
-                    print(index.row())
+                    # print(index.row())
                     it = self._df.iloc[index.row(), 10]
-                    print('---{0}-it----'.format(it))
+                    # print('---{0}-it----'.format(it))
                     if it == 5:
-                        print("-------5--------")
+                        # print("-------5--------")
                         return QBrush(Qt.yellow)
                     if it == 4:
-                        print("-------4--------")
+                        # print("-------4--------")
                         return QBrush(Qt.green)
 
             if role == Qt.DisplayRole:
@@ -71,6 +71,7 @@ class PandasModel(QAbstractTableModel):
         print(self.test)
 
 def eval_item(p_value, p_ele):
+    print("判断")
     print(str(p_value) + "_" + str(p_ele))
     # 读取标准文件，找到对应元素的区间进行判断
 
