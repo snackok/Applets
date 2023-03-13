@@ -38,8 +38,7 @@ class Stats:
         self.ui.btn_eval.clicked.connect(self.handle_eval)
         self.ui.btn_save.clicked.connect(self.handle_save)
 
-
-        #初始化窗体成员变量
+        # 初始化窗体成员变量
         self.c_data = None  # 待评价数据
         self.c_model = evl_lib.PandasModel()
         self.c_stand = None  # 评价标准
@@ -49,8 +48,8 @@ class Stats:
         self.load_eval_stand()
         # self.ui.txt_debug_info.setHidden(True)     # 调试按钮设置隐藏
 
-        # 调试时用
-        self.ui.txt_path.setText(r"W:/09TEMP/2022/01/test.xlsx")
+        # 调试时用   "W:/09TEMP/2022/01/test.xlsx"  W:/09TEMP/001/test.xls
+        self.ui.txt_path.setText(r"W:/09TEMP/001/test.xlsx")
         self.handle_open_xls()
 
     # 读取评价方法
@@ -60,8 +59,8 @@ class Stats:
         self.func_debug(t_stand, "读取评价标准")
         print(t_stand.shape[0])
         for i in range(2):
-            self.func_debug(t_stand.loc[i+1], "单个评价标准")
-            self.ui.cob_eval.addItem(str(i + 1) + '.' + t_stand.name[i+1])
+            self.func_debug(t_stand.loc[i + 1], "单个评价标准")
+            self.ui.cob_eval.addItem(str(i + 1) + '.' + t_stand.name[i + 1])
 
     # 解析函数
     def handle_debug(self):
@@ -71,28 +70,7 @@ class Stats:
         # evl_lib.is_element('MM')
         lvl = evl_lib.eval_item(0.7, 'MM')
         print(lvl)
-
-
-        # ### 测试2023.02.27   获取输入元素的 数据分级，比如输入是Fe   则返回[0.5,1,1,1.5,2]
-        # t_element = "Fe"
-        # self.c_stand = pd.read_excel("评价标准.xlsx", index_col=0, sheet_name="地下水水质标准")
-        # t_df = self.c_stand
-        # self.func_debug(t_df, "读取评价标准")
-        #
-        # ele_row = t_df.loc[t_df['标准'] == t_element, ['一类标准', '二类标准', '三类标准', '四类标准', '五类标准']]  # 五类标准值和4类是一样的，只是一个小于，一个大于
-        # ele_row_series = ele_row.iloc[0,:]     # 将df 转化为 series
-        # ele_row_series = ele_row_series.str.replace('≤', '')
-        # ele_row_series = ele_row_series.str.replace('＞', '')
-        # t_list = ele_row_series.values.tolist()
-        # float_list = list(map(float, t_list))
-        # print(float_list)
-        # num = 2
-        # import bisect
-        # position = bisect.bisect_left(float_list, num)
-        # print(f'{num} 位于数组的位置{position}')
         # print(f'{num} 属于{position+1}类水质')
-
-
 
     # 找到数据xlsx
     def handle_find_xls(self):
@@ -118,36 +96,32 @@ class Stats:
         self.func_debug(f_df, "评价数据")
         # 插入评价等级和超标元素列
         f_df.insert(f_df.shape[1], "评价等级", "")
-        f_eval_index = f_df.shape[1]-1
+        f_eval_index = f_df.shape[1] - 1
         f_df.insert(f_df.shape[1], "超标元素", "")
-        f_exceed_ele_index = f_df.shape[1]-1
+        f_exceed_ele_index = f_df.shape[1] - 1
+
         # 遍历数据行，进行评估
-        for row_i in range(f_df.shape[0]):
+        for row_i, row_data in f_df.iterrows():
             t_cur_col_result = 1
             # 跳过第一行，因为第一行是单位
             if row_i == 0:
                 continue
-            for col_i in range(f_df.shape[1]):
-
+            if row_i == 10:
+                break   # 调试用，只判断第一列数据
+            for col_i, col_data in row_data.iteritems():
                 # 如果是测试元素列，则进行判断
-                # print(f'列值为{f_df.columns.values[col_i]}')
-                if evl_lib.is_element(f_df.columns.values[col_i]):
-                    t_cur_result = evl_lib.eval_item(f_df.loc[row_i][col_i], f_df.columns.values[col_i])   # 评价单个元素
-                    # print(t_cur_result)
+                if evl_lib.is_element(col_i):
+                    t_cur_result = evl_lib.eval_item(col_data, col_i)  # 评价单个元素
                     # > 3 超标，超标则将此元素记录为超标元素,同时设置单元格颜色
                     if t_cur_result > 3:
-                        f_df.iloc[row_i][f_exceed_ele_index] += f_df.columns.values[col_i] + " "
-
+                        f_df.iloc[row_i, f_exceed_ele_index] += col_i + " "
                     # 取各个元素评价指标的最大值
                     if t_cur_result > t_cur_col_result:
                         t_cur_col_result = t_cur_result
             # 赋予评价值
-            f_df.iloc[row_i][f_eval_index] = t_cur_col_result
-        # 评价完后更新model
+            f_df.iloc[row_i, f_eval_index] = t_cur_col_result
+            # 评价完后更新model
         self.c_model.setDataFrame(f_df)
-        #self.ui.list_xls.setModel(model)
-        # 测试变颜色
-        #self.c_model.cellPaint(2, 2, "#FFFF00")
 
     # 选择评价标准时候触发
     def handle_sel_stand(self):
@@ -156,10 +130,9 @@ class Stats:
     # 保存函数
     def handle_save(self):
         savefile_name, file_type = QFileDialog.getSaveFileName(self.ui, '选择文件', ' ', 'Excel files(*.xlsx , *.xls)')
-        QMessageBox.about(self.ui, '保存', '保存'+savefile_name)
+        QMessageBox.about(self.ui, '保存', '保存' + savefile_name)
         f_df = self.ui.list_xls.model()._df  # type: pd.DataFrame
         f_df.to_excel(savefile_name)
-
 
     # 调试信息方法，以字符串方式输出 p_msg , 参数p_clear_msg 为true时 清空对话框
     def func_debug(self, p_msg, p_str_title='调试', p_clear_msg=False):
