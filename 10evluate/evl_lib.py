@@ -39,25 +39,24 @@ class PandasModel(QAbstractTableModel):
     def data(self, index, role=Qt.DisplayRole):
         if index.isValid():
             if role == Qt.BackgroundRole:
-                # print('---{0}-1123----'.format(self.columnCount()))
-                if self.columnCount() > 11:
-                    # print(index.row())
+                if '评价等级' not in self._df.columns:
+                    return
+                if index.column() == self._df.columns.get_loc('评价等级'):
                     try:
-                        # 找到评价等级列
-                        it = self._df.iloc[index.row(), self._df.columns.get_loc('评价等级')]
+                        it = self._df.iloc[index.row(), index.column()]
                         if it == '':
                             return
                         it = int(it)
-                        # print('---{0}-it----'.format(it))
                         if it > 4:
                             return QBrush(Qt.red)
                         if it == 4:
                             return QBrush(Qt.yellow)
-                    except Exception as e:  # 某些时候事件函数无法正确读取单元格内容，可忽略
+                    except Exception as e:
                         print(f"pandasmodel_data发生异常：{e}")
 
             if role == Qt.DisplayRole:
                 return str(self._df.iloc[index.row(), index.column()])
+
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
