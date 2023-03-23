@@ -106,12 +106,14 @@ class Stats:
             # 跳过第一行，因为第一行是单位
             if row_i == 0:
                 continue
-            if row_i == 10:
-                break   # 调试用，只判断第一列数据
+            # if row_i == 10:
+            #     break   # 调试用，只判断第一列数据
             for col_i, col_data in row_data.iteritems():
                 # 如果是测试元素列，则进行判断
                 if evl_lib.is_element(col_i):
                     t_cur_result = evl_lib.eval_item(col_data, col_i)  # 评价单个元素
+                    # 在这里添加列
+
                     # > 3 超标，超标则将此元素记录为超标元素,同时设置单元格颜色
                     if t_cur_result > 3:
                         f_df.iloc[row_i, f_exceed_ele_index] += col_i + " "

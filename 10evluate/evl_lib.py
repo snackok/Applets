@@ -144,3 +144,8 @@ def eval_ph(p_value, p_stand_name='地下水水质标准'):
     else:
         print(f'{p_value}属于5类水质')
         return 5
+
+
+# 是否数字
+def is_number(obj):
+    return isinstance(obj, (int, float, complex))
