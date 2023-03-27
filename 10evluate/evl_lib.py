@@ -74,7 +74,7 @@ class PandasModel(QAbstractTableModel):
 
 # p_value 为传入的元素值，p_ele 为此对应的元素名
 def eval_item(p_value, p_ele, p_stand_name='地下水水质标准'):
-    print(f'eval_item函数：判断{p_ele}元素值{p_value}属于{p_stand_name}中的几类')
+    # print(f'eval_item函数：判断{p_ele}元素值{p_value}属于{p_stand_name}中的几类')
     if p_ele == 'PH':
         return eval_ph(p_value, p_stand_name)
 
@@ -93,9 +93,9 @@ def eval_item(p_value, p_ele, p_stand_name='地下水水质标准'):
     # print(f'需要判断元素{p_ele}的值{t_value}的类型：')
     # 获取当前指标值在 标准值的哪个位置，输出即为水质类别
     position = bisect.bisect_left(t_list, t_value)
-    print(f'{p_value} 位于数组的位置{position}')
-    print(f'{p_value} 属于{position+1}类水质')
-    print(f"eval_item 结束")
+    # print(f'{p_value} 位于数组的位置{position}')
+    # print(f'{p_value} 属于{position+1}类水质')
+    # print(f"eval_item 结束")
     return position+1
     # return rand.randint(1, 5)
 

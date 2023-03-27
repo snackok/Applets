@@ -94,26 +94,33 @@ class Stats:
         # 可从xls.model()._data 中获取 pandas的 series对象
         f_df = self.ui.list_xls.model()._df  # type: pd.DataFrame
         self.func_debug(f_df, "评价数据")
+
+
+
+        # 针对每个待评价元素添加 评价列
+        for col in f_df.columns:
+            if evl_lib.is_element(col):
+                f_df.insert(f_df.columns.get_loc(col) + 1, f"{col}评价结果", "")
+
         # 插入评价等级和超标元素列
         f_df.insert(f_df.shape[1], "评价等级", "")
         f_eval_index = f_df.shape[1] - 1
         f_df.insert(f_df.shape[1], "超标元素", "")
         f_exceed_ele_index = f_df.shape[1] - 1
-
         # 遍历数据行，进行评估
         for row_i, row_data in f_df.iterrows():
             t_cur_col_result = 1
             # 跳过第一行，因为第一行是单位
             if row_i == 0:
                 continue
-            # if row_i == 10:
-            #     break   # 调试用，只判断第一列数据
+            if row_i == 10:
+                break   # 调试用，只判断第一列数据
             for col_i, col_data in row_data.iteritems():
                 # 如果是测试元素列，则进行判断
                 if evl_lib.is_element(col_i):
                     t_cur_result = evl_lib.eval_item(col_data, col_i)  # 评价单个元素
-                    # 在这里添加列
-
+                    # 在这里添加评价结果
+                    f_df.at[row_i, f"{col_i}评价结果"] = t_cur_result
                     # > 3 超标，超标则将此元素记录为超标元素,同时设置单元格颜色
                     if t_cur_result > 3:
                         f_df.iloc[row_i, f_exceed_ele_index] += col_i + " "
