@@ -24,7 +24,7 @@ class PandasModel(QAbstractTableModel):
 
     @pyqtSlot(pd.DataFrame)
     def setDataFrame(self, df):
-        print("pyqtSlot")
+        print("setDataFrame")
         self.beginResetModel()
         self._df = df
         self.endResetModel()
@@ -35,21 +35,48 @@ class PandasModel(QAbstractTableModel):
     def columnCount(self, parent=None):
         return self._df.shape[1]
 
+    def setData(self, index, value, role=Qt.EditRole):
+        print("setData")
+        if role == Qt.BackgroundRole:
+            # 在 colors 字典中保存单元格的背景颜色
+            self.colors[(index.row(), index.column())] = value
+            self.dataChanged.emit(index, index, [Qt.BackgroundRole])
+            return True
+        elif role == Qt.EditRole:
+            self._df.iloc[index.row(), index.column()] = value
+            self.dataChanged.emit(index, index, [Qt.DisplayRole])
+            return True
+        return False
+
+    def refresh(self):
+        # 目的是为了遍历整个表格，达到更新评价列的背景颜色，之后能保存数据格式到excel
+        for row in range(self.rowCount()):
+            for column in range(self.columnCount()):
+                index = self.index(row, column)
+                # self.ui.list_xls.model().refresh(index)
+                self.data(index, Qt.BackgroundRole)
+
     # 返回二维数组
     def data(self, index, role=Qt.DisplayRole):
         if index.isValid():
             if role == Qt.BackgroundRole:
-                if '评价等级' not in self._df.columns:
-                    return
-                if index.column() == self._df.columns.get_loc('评价等级'):
+                # if '评价等级' not in self._df.columns:
+                #     self.colors[(index.row(), index.column())] = QBrush(Qt.green)
+                #     # print(f'{index.row()}行{index.column()}的颜色为{QBrush(Qt.green)}')
+                #     return QBrush(Qt.green)
+                if '评价' in self._df.columns[index.column()]:
                     try:
                         it = self._df.iloc[index.row(), index.column()]
                         if it == '':
-                            return
+                            return self.colors.get((index.row(), index.column()))
                         it = int(it)
                         if it > 4:
+                            print(f'data{it}')
+                            self.colors[(index.row(), index.column())] = QBrush(Qt.red)
                             return QBrush(Qt.red)
                         if it == 4:
+                            print(f'data{it}')
+                            self.colors[(index.row(), index.column())] = QBrush(Qt.yellow)
                             return QBrush(Qt.yellow)
                     except Exception as e:
                         print(f"pandasmodel_data发生异常：{e}")
@@ -83,6 +110,15 @@ def eval_item(p_value, p_ele, p_stand_name='地下水水质标准'):
         t_value = float(t_value.replace('\\', '0'))
     else:
         t_value = p_value
+
+    # 如果p_ele中含有 NO2 则换算成N含量赋予 p_value
+    if 'NO2' in p_ele or 'NO3' in p_ele:
+        if 'NO2' in p_ele:
+            factor = 14.01 / 46.01
+        else:
+            factor = 14.01 / 62.00
+        t_value = t_value * factor
+
     # 读取标准文件，找到对应元素的区间进行判断
     t_list = get_data_list(p_ele, p_stand_name)
     # print(t_list)
@@ -128,7 +164,7 @@ def get_data_list(p_item_name, p_stand_name):
 
 # 单独判断HP值
 def eval_ph(p_value, p_stand_name='地下水水质标准'):
-    print(f'eval_ph函数：判断PH值{p_value}属于{p_stand_name}中的几类')
+    # print(f'eval_ph函数：判断PH值{p_value}属于{p_stand_name}中的几类')
     if type(p_value) == str:
         t_value = p_value.replace('<', '')
         t_value = float(t_value.replace('\\', '0'))
@@ -136,13 +172,13 @@ def eval_ph(p_value, p_stand_name='地下水水质标准'):
         t_value = p_value
 
     if 6.5 <= t_value <= 8.5:
-        print(f'{p_value}属于1类水质')
+        # print(f'{p_value}属于1类水质')
         return 1
     elif 5.5 <= t_value < 6.5 or 8.5 < t_value <= 9:
-        print(f'{p_value}属于3类水质')
+        # print(f'{p_value}属于3类水质')
         return 4
     else:
-        print(f'{p_value}属于5类水质')
+        # print(f'{p_value}属于5类水质')
         return 5
 
 
